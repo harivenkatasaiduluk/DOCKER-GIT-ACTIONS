@@ -18,7 +18,9 @@ FROM eclipse-temurin:21-jdk
 
 WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
+COPY wait-for-it.sh /app/wait-for-it.sh
+RUN chmod +x /app/wait-for-it.sh
 
 EXPOSE 2000
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["/app/wait-for-it.sh", "mysqldb:3306", "--timeout=60", "--", "java", "-jar", "app.jar"]
